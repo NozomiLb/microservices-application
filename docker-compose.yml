@@ -1,0 +1,133 @@
+services:
+  customer-database:
+    image: mysql:latest
+    container_name: customer-database
+    env_file:
+      - ./pitstop-customer/.env
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: database_production
+    volumes:
+      - customer_db:/var/lib/mysql
+      - customer_dbconfig:/etc/mysql/conf.d
+    ports:
+      - "3306:3306"
+    networks:
+      - sudnetwork
+
+  vehicle-database:
+    image: mysql:latest
+    container_name: vehicle-database
+    env_file:
+      - ./pitstop-vehicle/.env
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: database_production
+    volumes:
+      - vehicle_db:/var/lib/mysql
+      - vehicle_dbconfig:/etc/mysql/conf.d
+    ports:
+      - "3307:3306"
+    networks:
+      - sudnetwork
+
+  workshop-database:
+    image: mysql:latest
+    container_name: workshop-database
+    env_file:
+      - ./pitstop-workshop-planning/.env
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: database_production
+    volumes:
+      - workshop_db:/var/lib/mysql
+      - workshop_dbconfig:/etc/mysql/conf.d
+    ports:
+      - "3308:3306"
+    networks:
+      - sudnetwork
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq-container-service
+    environment:
+      - RABBITMQ_DEFAULT_USER=root
+      - RABBITMQ_DEFAULT_PASS=rootpassword
+    ports:
+      - "15672:15672"
+    networks:
+      - sudnetwork
+
+  customer-service:
+    image: nozomihub/customer-service:1.0.1
+    container_name: customer-container-service
+    env_file:
+      - ./pitstop-customer/.env
+    ports:
+      - "3001:3001"
+    networks:
+      - sudnetwork
+    depends_on:
+      - customer-database
+      - rabbitmq
+
+  vehicle-service:
+    image: nozomihub/vehicle-service:1.0.1
+    container_name: vehicle-container-service
+    env_file:
+      - ./pitstop-vehicle/.env
+    ports:
+      - "3002:3002"
+    networks:
+      - sudnetwork
+    depends_on:
+      - vehicle-database
+      - rabbitmq
+
+  workshop-service:
+    image: nozomihub/workshop-service:1.0.1
+    container_name: workshop-container-service
+    env_file:
+      - ./pitstop-workshop-planning/.env
+    ports:
+      - "3003:3003"
+    networks:
+      - sudnetwork
+    depends_on:
+      - workshop-database
+      - rabbitmq
+
+  api-gateway:
+    image: nozomihub/api-gateway-container-service:1.0.1
+    container_name: api-gateway-container-service
+    ports:
+      - "8080:8080"
+    networks:
+      - sudnetwork
+    depends_on:
+      - customer-service
+      - vehicle-service
+      - workshop-service
+
+
+  webapp:
+    image: nozomihub/webapp-service:1.0.1
+    container_name: webapp-container-service
+    ports:
+      - "8081:80"
+    networks:
+      - sudnetwork
+    depends_on:
+      - api-gateway
+
+networks:
+  sudnetwork:
+    driver: bridge
+
+volumes:
+  customer_db:
+  customer_dbconfig:
+  vehicle_db:
+  vehicle_dbconfig:
+  workshop_db:
+  workshop_dbconfig:

@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: microservice-customer
+  namespace: garage
+  labels:
+    app: microservice-customer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: microservice-customer
+  template:
+    metadata:
+      labels:
+        app: microservice-customer
+    spec:
+      containers:
+      - name: customer-container-service
+        image: nozomihub/customer-service:78396f5b
+        ports:
+        - containerPort: 3001
+        envFrom:
+        - configMapRef:
+            name: configmap
+        - secretRef:
+            name: secret
+        env:
+        - name: PROD_DB_HOSTNAME
+          value: mysql-customer-service
+        - name: DB_HOST
+          value: mysql-customer-service
+        - name: PORT
+          value: "3001"
+        - name: SERVICE_NAME
+          value: customer-service
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: customer-service
+  namespace: garage
+spec:
+  selector:
+    app: microservice-customer
+  ports:
+  - protocol: TCP
+    port: 3001
+    targetPort: 3001

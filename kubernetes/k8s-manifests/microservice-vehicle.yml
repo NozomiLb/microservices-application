@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: microservice-vehicle
+  namespace: garage
+  labels:
+    app: microservice-vehicle
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: microservice-vehicle
+  template:
+    metadata:
+      labels:
+        app: microservice-vehicle
+    spec:
+      containers:
+      - name: vehicle-container-service
+        image: nozomihub/vehicle-service:b4c1776d
+        ports:
+        - containerPort: 3002
+        envFrom:
+        - configMapRef:
+            name: configmap
+        - secretRef:
+            name: secret
+        env:
+        - name: PROD_DB_HOSTNAME
+          value: mysql-vehicle-service
+        - name: DB_HOST
+          value: mysql-vehicle-service
+        - name: PORT
+          value: "3002"
+        - name: SERVICE_NAME
+          value: vehicle-service
+                  
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vehicle-service
+  namespace: garage
+spec:
+  selector:
+    app: microservice-vehicle
+  ports:
+  - protocol: TCP
+    port: 3002
+    targetPort: 3002

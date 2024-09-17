@@ -1,0 +1,10 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: webapp-budget
+  namespace: garage
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: webapp

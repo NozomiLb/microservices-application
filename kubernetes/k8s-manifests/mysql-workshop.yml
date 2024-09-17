@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-workshop
+  namespace: garage
+spec:
+  serviceName: mysql-workshop-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-workshop
+  template:
+    metadata:
+      labels:
+        app: mysql-workshop
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: workshop-database
+        image: mysql:latest
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: secret
+              key: MYSQL_ROOT_PASSWORD
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: configmap
+              key: MYSQL_DATABASE
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: workshop-db
+  volumeClaimTemplates:
+  - metadata:
+      name: workshop-db
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-workshop-service
+  namespace: garage
+spec:
+  selector:
+    app: mysql-workshop
+  ports:
+  - port: 3306
+    targetPort: 3306
+    protocol: TCP

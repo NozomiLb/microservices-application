@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-customer
+  namespace: garage
+spec:
+  serviceName: mysql-customer-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-customer
+  template:
+    metadata:
+      labels:
+        app: mysql-customer
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: customer-database
+        image: mysql:latest
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: secret
+              key: MYSQL_ROOT_PASSWORD
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: configmap
+              key: MYSQL_DATABASE
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: customer-db
+  volumeClaimTemplates:
+  - metadata:
+      name: customer-db
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-customer-service
+  namespace: garage
+spec:
+  selector:
+    app: mysql-customer
+  ports:
+  - port: 3306
+    targetPort: 3306
+    protocol: TCP

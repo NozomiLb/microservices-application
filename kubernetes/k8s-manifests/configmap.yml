@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: configmap
+  namespace: garage
+data:
+  MYSQL_DATABASE: database_production
+  MESSAGE_BUS: rabbitmq-service
+  MESSAGE_BUS_TIMEOUT: "5000"
+  PROD_DB_PORT: "3306"
+  PROD_DB_NAME: database_production

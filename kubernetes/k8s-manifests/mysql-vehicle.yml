@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-vehicle
+  namespace: garage
+spec:
+  serviceName: mysql-vehicle-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-vehicle
+  template:
+    metadata:
+      labels:
+        app: mysql-vehicle
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: vehicle-database
+        image: mysql:latest
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: secret
+              key: MYSQL_ROOT_PASSWORD
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: configmap
+              key: MYSQL_DATABASE
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: vehicle-db
+  volumeClaimTemplates:
+  - metadata:
+      name: vehicle-db
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-vehicle-service
+  namespace: garage
+spec:
+  selector:
+    app: mysql-vehicle
+  ports:
+  - port: 3306
+    targetPort: 3306
+    protocol: TCP
