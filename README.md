@@ -30,9 +30,12 @@ The following diagram illustrates the architecture of the DevOps pipeline and mi
 
 ![Architecture Diagram](./project-architecture.png)
 
-
-
-
 ## Experience Gained
 
 This project provided hands-on experience with a wide range of cloud-native tools and DevOps methodologies, significantly enhancing the efficiency of application deployment and monitoring.
+
+## Project Report
+
+For a detailed step-by-step guide on implementing this DevOps pipeline for a microservices-based application, including containerization, CI/CD pipelines, Kubernetes deployment, and monitoring with Prometheus and Grafana, refer to the full project report:
+
+[Click here to view the project report](https://drive.google.com/file/d/1cMENc9MFp_GTsBFap2PTS819IbVMQJV6/view?usp=drive_link)
