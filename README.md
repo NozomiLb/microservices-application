@@ -14,7 +14,8 @@ This project demonstrates a comprehensive DevOps pipeline for deploying and mana
 - **Grafana**: Visualization and monitoring dashboards
 - **ELK Stack**: Elasticsearch, Logstash, Kibana for log management
 - **Istio**: Service mesh for traffic management, secure communication, and observability
-
+- **Helm**: Package management for Kubernetes applications
+- **Helm**: Package management for Kubernetes applications
 
 ## Features
 
