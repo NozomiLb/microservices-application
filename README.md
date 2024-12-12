@@ -1,4 +1,4 @@
-# End-to-End DevOps Project for Microservices 
+# End-to-End DevOps Project for Microservices Application
 
 ## Overview
 
