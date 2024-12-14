@@ -98,7 +98,7 @@ services:
       - rabbitmq
 
   api-gateway:
-    image: nozomihub/api-gateway-container-service:1.0.1
+    image: nozomihub/api-gateway-container-service:1.0.3
     container_name: api-gateway-container-service
     ports:
       - "8080:8080"
@@ -111,7 +111,7 @@ services:
 
 
   webapp:
-    image: nozomihub/webapp-service:1.0.1
+    image: nozomihub/webapp-service:1.0.3
     container_name: webapp-container-service
     ports:
       - "8081:80"
