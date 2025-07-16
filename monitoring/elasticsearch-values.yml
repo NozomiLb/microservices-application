@@ -10,7 +10,7 @@ masterService: ""
 # These will be set as environment variables. E.g. node.roles=master
 # https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-node.html#node-roles
 roles:
-
+  - master
   - data
   - data_content
   - data_hot
