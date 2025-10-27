@@ -1,4 +1,4 @@
 cd pitstop-express-gateway/
 ./bash.sh
 cd ..
-# sudo docker-compose up -d
+sudo docker-compose up -d
